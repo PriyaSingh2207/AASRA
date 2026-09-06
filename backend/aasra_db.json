@@ -1,0 +1,248 @@
+{
+  "patient": {
+    "digital_id": "AASRA-8921-IND",
+    "name": "Savitri Devi",
+    "age": 74,
+    "language": "hi",
+    "voice_enabled": true,
+    "voice_speed": 0.9,
+    "high_contrast": false,
+    "large_text": true,
+    "caregiver_credential": "CG-9942-AUTH",
+    "emergency_contacts": [
+      {
+        "name": "Rahul Sharma (Son)",
+        "phone": "+91 98765 43210",
+        "role": "Primary Caregiver"
+      },
+      {
+        "name": "Dr. Ananya Baruah",
+        "phone": "+91 94350 12345",
+        "role": "Neurologist"
+      }
+    ],
+    "created_at": 1788719427.7618613
+  },
+  "caregivers": [
+    {
+      "caregiver_id": "CG-9942-AUTH",
+      "name": "Rahul Sharma",
+      "relation": "Son & Primary Caregiver",
+      "email": "rahul.sharma@example.com",
+      "phone": "+91 98765 43210",
+      "status": "connected",
+      "connected_at": 1786127427.7618642
+    }
+  ],
+  "consent": {
+    "medicine_access": true,
+    "cognitive_metrics": true,
+    "memory_capsule_edit": true,
+    "location_sharing": true,
+    "community_visibility": false,
+    "audit_logs": [
+      {
+        "timestamp": 1788633027.7618668,
+        "actor": "Rahul Sharma (Caregiver)",
+        "action": "Viewed medication adherence report",
+        "status": "APPROVED"
+      },
+      {
+        "timestamp": 1788676227.7618678,
+        "actor": "Rahul Sharma (Caregiver)",
+        "action": "Added evening BP check reminder",
+        "status": "APPROVED"
+      },
+      {
+        "timestamp": 1788715827.7618687,
+        "actor": "System AI Engine",
+        "action": "Generated weekly cognitive trend insight",
+        "status": "APPROVED"
+      }
+    ]
+  },
+  "reminders": [
+    {
+      "id": "rem-1",
+      "title": "Morning Memory Pill (Donepezil 5mg)",
+      "category": "medicine",
+      "time": "08:00 AM",
+      "status": "taken",
+      "dosage": "1 tablet after breakfast",
+      "prescribed_by": "Dr. Ananya Baruah",
+      "audio_prompt": "Savitri ji, please take your morning memory tablet Donepezil with water."
+    },
+    {
+      "id": "rem-2",
+      "title": "Morning Hydration & Water",
+      "category": "hydration",
+      "time": "10:30 AM",
+      "status": "taken",
+      "dosage": "1 full glass",
+      "prescribed_by": "Routine Care Plan",
+      "audio_prompt": "Time for a glass of fresh water to stay hydrated."
+    },
+    {
+      "id": "rem-3",
+      "title": "Afternoon BP Tablet (Amlodipine 5mg)",
+      "category": "medicine",
+      "time": "02:00 PM",
+      "status": "pending",
+      "dosage": "1 tablet after lunch",
+      "prescribed_by": "Dr. Ananya Baruah",
+      "audio_prompt": "It is 2 PM. Please take your afternoon blood pressure tablet."
+    },
+    {
+      "id": "rem-4",
+      "title": "Daily Cognitive Exercise - Family Recall",
+      "category": "cognitive",
+      "time": "04:30 PM",
+      "status": "pending",
+      "dosage": "10 minute photo match session",
+      "prescribed_by": "AASRA Cognitive Plan",
+      "audio_prompt": "Let us play today's fun family photo memory game!"
+    },
+    {
+      "id": "rem-5",
+      "title": "Evening Walk & Breathing",
+      "category": "routine",
+      "time": "06:00 PM",
+      "status": "pending",
+      "dosage": "15 minutes in garden",
+      "prescribed_by": "Routine Care Plan",
+      "audio_prompt": "Time for a peaceful 15-minute evening walk."
+    }
+  ],
+  "cognitive": {
+    "baseline_completed": true,
+    "baseline_score": 78.5,
+    "domains": {
+      "memory": {
+        "score": 82,
+        "trend": "+4%",
+        "level": 2
+      },
+      "attention": {
+        "score": 74,
+        "trend": "+2%",
+        "level": 2
+      },
+      "recognition": {
+        "score": 88,
+        "trend": "+6%",
+        "level": 3
+      },
+      "orientation": {
+        "score": 70,
+        "trend": "-1%",
+        "level": 1
+      },
+      "processing": {
+        "score": 76,
+        "trend": "+3%",
+        "level": 2
+      },
+      "problem_solving": {
+        "score": 72,
+        "trend": "+1%",
+        "level": 2
+      }
+    },
+    "sessions": [
+      {
+        "id": "session-101",
+        "game_type": "photo_recall",
+        "score": 90,
+        "domain": "recognition",
+        "difficulty": 2,
+        "completion_time_sec": 42,
+        "timestamp": 1788546627.76188
+      },
+      {
+        "id": "session-102",
+        "game_type": "spatial_focus",
+        "score": 75,
+        "domain": "attention",
+        "difficulty": 2,
+        "completion_time_sec": 55,
+        "timestamp": 1788633027.761881
+      }
+    ]
+  },
+  "memory_capsule": [
+    {
+      "id": "mem-1",
+      "title": "Son Rahul & Family in Guwahati",
+      "relationship": "Son & Daughter-in-law",
+      "context": "Family gathering at Kamakhya temple visit in Assam",
+      "year": "2023",
+      "audio_story": "Rahul and Priya brought fresh marigold flowers. We had traditional tea together.",
+      "image_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "mem-2",
+      "title": "Granddaughter Meera's School Graduation",
+      "relationship": "Granddaughter",
+      "context": "Meera won first prize in classical dance competition",
+      "year": "2024",
+      "audio_story": "Meera wore a red silk saree and performed Bihu dance beautifully.",
+      "image_url": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "mem-3",
+      "title": "Family Home Garden in Shillong",
+      "relationship": "Familiar Place",
+      "context": "Our ancestral garden where pine trees and orchids bloom",
+      "year": "2022",
+      "audio_story": "You love sitting in the morning sun listening to hill birds.",
+      "image_url": "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "title": "Guwahati Temple Family Visit",
+      "relationship": "Family Gathering",
+      "context": "Rahul and Priya brought marigolds.",
+      "year": "2026",
+      "audio_story": "Rahul and Priya brought marigolds.",
+      "image_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80",
+      "id": "mem-5d961b"
+    }
+  ],
+  "medical_vault": [
+    {
+      "id": "doc-1",
+      "title": "Neurology Consultation & Prescription",
+      "doctor": "Dr. Ananya Baruah (MD Neurology)",
+      "hospital": "Guwahati Neurological Institute",
+      "date": "2026-08-15",
+      "notes": "Patient showing stable cognitive maintenance. Continue Donepezil 5mg once daily.",
+      "type": "Prescription"
+    },
+    {
+      "id": "doc-2",
+      "title": "Annual Blood Panel & Vit D3 Report",
+      "doctor": "Dr. R. K. Medhi Labs",
+      "hospital": "Northeast Diagnostics",
+      "date": "2026-07-10",
+      "notes": "Vitamin D3 slightly low. Prescribed weekly oral drops.",
+      "type": "Lab Report"
+    }
+  ],
+  "emergency_events": [
+    {
+      "timestamp": 1788719550.455025,
+      "patient": "Savitri Devi",
+      "digital_id": "AASRA-8921-IND",
+      "location": "Shillong Living Room (GPS: 25.5788° N, 91.8933° E)",
+      "trigger_type": "1-Tap SOS Button",
+      "status": "ACTIVE_ALERT"
+    },
+    {
+      "timestamp": 1788719468.7202716,
+      "patient": "Savitri Devi",
+      "digital_id": "AASRA-8921-IND",
+      "location": "Shillong",
+      "trigger_type": "Voice / 1-Tap SOS Button",
+      "status": "ACTIVE_ALERT"
+    }
+  ]
+}

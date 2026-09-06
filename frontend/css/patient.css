@@ -1,0 +1,273 @@
+/* Senior-Friendly Patient App Specific Styling */
+
+.patient-app-wrapper {
+  max-width: 840px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Patient Header Welcome */
+.patient-hero {
+  background: linear-gradient(135deg, #0F766E 0%, #115E59 100%);
+  color: white;
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(15, 118, 110, 0.25);
+}
+
+.patient-hero::after {
+  content: '🌸';
+  position: absolute;
+  right: 20px;
+  bottom: -10px;
+  font-size: 110px;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.greeting-text {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.greeting-sub {
+  font-size: 20px;
+  opacity: 0.92;
+  font-weight: 400;
+}
+
+/* Voice Assistant Card */
+.voice-assistant-bar {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border: 2px solid #F59E0B;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--shadow-md);
+}
+
+.mic-btn-large {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D97706, #F59E0B);
+  color: white;
+  border: none;
+  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(217, 119, 6, 0.4);
+  animation: pulse-glow 2.5s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse-glow {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.6); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 16px rgba(217, 119, 6, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); }
+}
+
+.voice-text-box {
+  flex: 1;
+}
+
+.voice-prompt-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #78350F;
+}
+
+.voice-prompt-hint {
+  font-size: 17px;
+  color: #92400E;
+}
+
+/* "Right Now" Hero Task */
+.hero-task-card {
+  background: white;
+  border: 3px solid var(--primary-teal);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+}
+
+.hero-task-label {
+  display: inline-block;
+  background: #CCFBF1;
+  color: #0F766E;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.hero-task-title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: var(--slate-dark);
+}
+
+.hero-task-detail {
+  font-size: 19px;
+  color: var(--slate-muted);
+  margin-bottom: 20px;
+}
+
+.task-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.action-btn-taken {
+  background: #10B981;
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  min-height: 60px;
+  border-radius: 16px;
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+.action-btn-audio {
+  background: #F1F5F9;
+  color: var(--slate-dark);
+  border: 2px solid #CBD5E1;
+  padding: 16px 24px;
+  min-height: 60px;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Daily Schedule Grid */
+.schedule-section-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--slate-dark);
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reminder-item-card {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #E2E8F0;
+}
+
+.reminder-item-card.taken {
+  background: #F0FDF4;
+  border-color: #86EFAC;
+}
+
+.reminder-time {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--primary-teal);
+  min-width: 90px;
+}
+
+.reminder-info {
+  flex: 1;
+  padding: 0 16px;
+}
+
+.reminder-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--slate-dark);
+}
+
+.reminder-sub {
+  font-size: 15px;
+  color: var(--slate-muted);
+}
+
+/* Cognitive Game Selector Card */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.game-card-btn {
+  background: white;
+  border: 2px solid #E2E8F0;
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.game-card-btn:hover {
+  border-color: var(--primary-teal);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.game-icon-large {
+  font-size: 36px;
+}
+
+.game-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--slate-dark);
+}
+
+.game-desc {
+  font-size: 14px;
+  color: var(--slate-muted);
+}
+
+/* Emergency Floating SOS Bar */
+.emergency-fixed-bar {
+  background: #FFF1F2;
+  border: 2px solid #FECDD3;
+  border-radius: var(--radius-md);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.sos-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #9F1239;
+}
