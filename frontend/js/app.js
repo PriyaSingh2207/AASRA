@@ -11,6 +11,7 @@ class AppController {
 
   async init() {
     this.bindEvents();
+    this.restoreAccessibilitySettings();
     
     // Load initial backend data across components
     if (window.remindersEngine) await window.remindersEngine.loadReminders();
@@ -51,6 +52,31 @@ class AppController {
         if (window.voiceAssistant) window.voiceAssistant.setLanguage(langCode);
       });
     }
+  }
+
+  restoreAccessibilitySettings() {
+    const usesLargeText = localStorage.getItem('aasra_large_text') === 'true';
+    document.body.classList.toggle('large-text', usesLargeText);
+    this.updateTextSizeControl(usesLargeText);
+  }
+
+  toggleLargeText() {
+    const enabled = !document.body.classList.contains('large-text');
+    document.body.classList.toggle('large-text', enabled);
+    localStorage.setItem('aasra_large_text', String(enabled));
+    this.updateTextSizeControl(enabled);
+    if (window.voiceAssistant) {
+      window.voiceAssistant.speak(enabled ? 'Larger text is on.' : 'Standard text size is on.');
+    }
+  }
+
+  updateTextSizeControl(enabled) {
+    const button = document.getElementById('btnTextSize');
+    if (!button) return;
+    button.setAttribute('aria-pressed', String(enabled));
+    button.setAttribute('aria-label', enabled ? 'Use standard text' : 'Use larger text');
+    button.classList.toggle('bg-primary', enabled);
+    button.classList.toggle('text-on-primary', enabled);
   }
 
   switchMode(mode) {

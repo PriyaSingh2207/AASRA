@@ -153,6 +153,11 @@
           <span class="font-label-sm text-label-sm font-bold" id="currentLangLabel">अ/En</span>
         </button>
 
+        <!-- One-tap readable-text setting for the patient view -->
+        <button aria-pressed="false" aria-label="Use larger text" class="h-11 min-w-[44px] px-2.5 rounded-full bg-surface-container-low text-primary flex items-center justify-center transition-colors hover:bg-surface-container font-bold" id="btnTextSize" type="button" onclick="window.appController.toggleLargeText()">
+          <span class="text-base leading-none">A<span class="text-xs">A</span></span>
+        </button>
+
         <!-- Profile Avatar & Role Switcher Button -->
         <button aria-label="User Account & Switch Profile" class="flex items-center gap-1.5 pl-1 rounded-full hover:bg-surface-container-low p-1 transition-all active:scale-95 text-left" type="button" onclick="window.authController.openAuthModal()">
           <div id="headerProfileAvatar" class="w-11 h-11 rounded-full bg-gradient-to-tr from-primary to-primary-container text-on-primary font-bold text-lg flex items-center justify-center shadow-[0_2px_6px_rgba(15,28,44,0.12)] shrink-0">
@@ -210,7 +215,7 @@
         </section>
 
         <!-- Voice Companion Banner -->
-        <section class="bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-lg p-card-pad-md shadow-md relative overflow-hidden">
+        <section class="senior-voice-panel bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-lg p-card-pad-md shadow-md relative overflow-hidden">
           <div class="flex items-center justify-between gap-3">
             <div class="space-y-1">
               <span class="font-label-sm text-label-sm text-primary-fixed uppercase tracking-wider font-bold" id="voiceHeroTitle">Voice Companion • মাত-কথা</span>
@@ -239,7 +244,7 @@
         </section>
 
         <!-- Right Now Hero Medication Card -->
-        <section class="bg-secondary-fixed text-on-secondary-fixed rounded-lg p-card-pad-md shadow-sm">
+        <section class="senior-priority-card bg-secondary-fixed text-on-secondary-fixed rounded-lg p-card-pad-md shadow-sm">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="h-3 w-3 rounded-full bg-secondary animate-pulse"></span>
@@ -282,7 +287,7 @@
             <h2 class="font-headline-md text-headline-md font-bold text-on-surface" id="aacTitle">Visual Direct Needs</h2>
             <span class="font-label-sm text-label-sm text-on-surface-variant" id="aacSub">Tap card to speak</span>
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="senior-needs-grid grid grid-cols-2 gap-3">
             <button class="bg-surface-container-high active:bg-surface-container rounded-DEFAULT p-card-pad-sm flex flex-col text-left justify-between min-h-[148px] active:scale-[0.98] transition-transform shadow-sm" onclick="triggerAAC('Need Water', 'পানী খাবলৈ লাগে • Thirsty')" type="button">
               <div class="h-14 w-14 rounded-full bg-surface-container-lowest flex items-center justify-center">
                 <span class="material-symbols-outlined text-4xl text-primary" style="font-variation-settings: 'FILL' 1;">water_drop</span>
@@ -354,7 +359,7 @@
         </section>
 
         <!-- Full Schedule List -->
-        <section class="bg-surface-container-lowest rounded-lg p-card-pad-md shadow-sm">
+        <section class="senior-schedule-panel bg-surface-container-lowest rounded-lg p-card-pad-md shadow-sm">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-primary text-2xl">list_alt</span>

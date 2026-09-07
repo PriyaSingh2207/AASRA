@@ -6,7 +6,7 @@
 
 class OfflineSyncEngine {
   constructor() {
-    self.isOnline = navigator.onLine;
+    this.isOnline = navigator.onLine;
     this.storageKey = 'aasra_offline_queue';
     this.cacheKey = 'aasra_local_cache';
     this.initNetworkListeners();

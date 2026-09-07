@@ -985,7 +985,11 @@ class DatabaseEngine:
         clean_code = str(code).strip().upper().replace(" ", "")
         with self.get_connection() as conn:
             row = conn.execute(
-                "SELECT * FROM users WHERE UPPER(pairing_code) = ? OR UPPER(patient_digital_id) = ? LIMIT 1",
+                """SELECT * FROM users
+                   WHERE (UPPER(pairing_code) = ? OR UPPER(patient_digital_id) = ?)
+                     AND role IN ('primary_caregiver', 'caregiver')
+                   ORDER BY CASE role WHEN 'primary_caregiver' THEN 0 ELSE 1 END
+                   LIMIT 1""",
                 (clean_code, clean_code)
             ).fetchone()
             if not row:

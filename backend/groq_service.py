@@ -142,7 +142,7 @@ class GroqGrokService:
         game_type = session_data.get("game_type", "photo_recall")
         score = session_data.get("score", 70)
         time_taken = session_data.get("completion_time_sec", 45)
-        current_level = session_data.get("difficulty", 2)
+        current_level = max(1, min(10, int(round(float(session_data.get("difficulty", 2))))))
         patient_name = session_data.get("patient_name", "Savitri Devi")
 
         prompt = f"""
@@ -151,10 +151,10 @@ Analyze this dementia-care cognitive exercise session and return ONLY valid JSON
 - Exercise: {game_type}
 - Score: {score}/100
 - Completion Time: {time_taken} seconds
-- Current Level: {current_level} (Scale 1 to 5)
+- Current Level: {current_level} (Scale 1 to 10)
 
 Provide:
-1. next_level: float between 1.0 and 5.0 (increase gently if >=85 and fast, decrease if <60 or slow to prevent fatigue/frustration).
+1. next_level: integer between 1 and 10 (increase gently if >=85 and fast, decrease if <60 or slow to prevent fatigue/frustration).
 2. pacing_pace_factor: float (e.g. 0.85 = calm, 1.0 = normal).
 3. distractor_count: integer (2 to 6).
 4. clue_delay_sec: integer (seconds before showing audio/visual hint).
@@ -184,7 +184,7 @@ Provide:
                     "score": score,
                     "completion_time_sec": time_taken,
                     "previous_level": current_level,
-                    "next_recommended_level": parsed.get("next_level", current_level),
+                    "next_recommended_level": max(1, min(10, int(round(float(parsed.get("next_level", current_level)))))),
                     "pacing_pace_factor": parsed.get("pacing_pace_factor", 0.88),
                     "distractor_count": parsed.get("distractor_count", 4),
                     "clue_delay_sec": parsed.get("clue_delay_sec", 15),
@@ -199,7 +199,7 @@ Provide:
         time_bonus = 5 if time_taken < 30 else (0 if time_taken < 60 else -5)
         adjusted_score = max(0, min(100, score + time_bonus))
         if adjusted_score >= 85:
-            next_lvl = min(5, current_level + 1)
+            next_lvl = min(10, current_level + 1)
             reason = "High accuracy and rapid recall! Gently expanding exercise variety."
         elif adjusted_score <= 55:
             next_lvl = max(1, current_level - 1)
@@ -235,7 +235,7 @@ Provide:
         prompt = f"""
 Generate a gentle cognitive exercise challenge for dementia patient in JSON format:
 - Exercise Type: {game_type} (options: photo_recall, spatial_focus, time_quiz, math_puzzle, plant_match)
-- Target Level: {difficulty} (1 to 5)
+- Target Level: {difficulty} (1 to 10)
 - Language: {lang}
 - Patient Profile: Savitri Devi, 72, loves tea, garden flowers, family photos, memories of Shillong and Guwahati.
 
