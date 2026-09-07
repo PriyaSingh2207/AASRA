@@ -1,7 +1,7 @@
 /**
  * AASRA Voice-First AI Assistant
  * Sovereign Multilingual Voice Engine with Sarvam AI & Web Speech API
- * Supports Speech-to-Text, Natural Language Intent Parsing, and Neural Voice Synthesis.
+ * Full Voice Navigation, Intent Recognition & Neural Speech Synthesis.
  */
 
 class VoiceAssistantEngine {
@@ -215,7 +215,7 @@ class VoiceAssistantEngine {
 
     const replyBox = document.getElementById('voiceReplyBox');
     if (replyBox) {
-      replyBox.innerText = "Analyzing voice command with Sarvam AI...";
+      replyBox.innerText = "Analyzing voice command & navigating...";
       replyBox.classList.remove('hidden');
     }
 
@@ -245,52 +245,165 @@ class VoiceAssistantEngine {
 
   executeVoiceAction(data) {
     const intent = data.intent;
+    const navTarget = data.nav_target;
+    const gameId = data.game_id;
 
+    // 1. Emergency SOS
     if (intent === 'emergency_sos') {
       if (window.emergencyEngine) {
         window.emergencyEngine.triggerSOS('Voice Command: Emergency SOS');
       } else {
         alert("🚨 Emergency SOS Triggered! Caregivers notified with location.");
       }
-    } else if (intent === 'get_schedule' || intent === 'read_next_reminder') {
+      return;
+    }
+
+    // 2. Direct Cognitive Game Navigation & Launch
+    if (intent === 'navigate_game' || gameId) {
+      this.switchToPatientMode();
+      if (typeof switchTab === 'function') switchTab('games');
+      const targetGame = gameId || 'photo_recall';
+      setTimeout(() => {
+        if (window.cognitiveEngine) {
+          window.cognitiveEngine.launchGame(targetGame);
+        }
+        const gameModal = document.getElementById('gameActiveModal');
+        if (gameModal) gameModal.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 350);
+      return;
+    }
+
+    // 3. Tab Navigation (today, games, memory, consent)
+    if (intent === 'navigate_tab' || intent === 'start_cognitive_game') {
+      this.switchToPatientMode();
+      const tab = navTarget || (intent === 'start_cognitive_game' ? 'games' : 'today');
+      if (typeof switchTab === 'function') {
+        switchTab(tab);
+      }
+      return;
+    }
+
+    // 4. Mode Navigation (Caregiver Dashboard vs Patient App)
+    if (intent === 'navigate_mode') {
+      if (navTarget === 'caregiver') {
+        this.switchToCaregiverMode();
+      } else {
+        this.switchToPatientMode();
+      }
+      return;
+    }
+
+    // 5. Modal Navigation (Auth / Profile, Language)
+    if (intent === 'navigate_modal') {
+      if (navTarget === 'auth') {
+        this.closeVoiceModal();
+        if (window.authController) window.authController.openAuthModal();
+      } else if (navTarget === 'lang') {
+        const langModal = document.getElementById('langModal');
+        if (langModal) langModal.classList.remove('hidden');
+      }
+      return;
+    }
+
+    // 6. Direct AAC & Needs Actions
+    if (intent === 'action_need') {
+      if (data.action === 'water_need') {
+        if (typeof triggerAAC === 'function') {
+          triggerAAC('Need Water', 'পানী লাগিছে • Thirsty');
+        }
+      }
+      return;
+    }
+
+    // 7. Schedule & Reminders
+    if (intent === 'get_schedule' || intent === 'read_next_reminder') {
+      this.switchToPatientMode();
       if (typeof switchTab === 'function') switchTab('today');
       const medTitle = document.getElementById('medTitle');
       if (medTitle) {
         medTitle.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
-    } else if (intent === 'start_cognitive_game' || intent === 'launch_game') {
-      if (typeof switchTab === 'function') switchTab('games');
-      setTimeout(() => {
-        if (window.cognitiveEngine) {
-          window.cognitiveEngine.launchGame('photo_recall');
-        }
-      }, 400);
-    } else if (intent === 'call_caregiver' || intent === 'dial_caregiver') {
-      alert("📞 Calling Primary Caregiver: Rahul Sharma (+91 98765 43210)...");
-    } else if (intent === 'location_orientation') {
+      return;
+    }
+
+    // 8. Location Orientation
+    if (intent === 'location_orientation') {
+      this.switchToPatientMode();
       if (typeof switchTab === 'function') switchTab('today');
       const safetyBox = document.getElementById('safetyText');
       if (safetyBox) safetyBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // 9. Call Caregiver
+    if (intent === 'call_caregiver' || intent === 'dial_caregiver') {
+      alert("📞 Calling Primary Caregiver: Rahul Sharma (+91 98765 43210)...");
+      return;
+    }
+  }
+
+  switchToCaregiverMode() {
+    const patientView = document.getElementById('patientAppView');
+    const caregiverView = document.getElementById('caregiverDashboardView');
+    const bottomNav = document.getElementById('bottomNav');
+    const toggleLabel = document.getElementById('modeToggleLabel');
+
+    if (patientView && caregiverView) {
+      patientView.classList.add('hidden');
+      caregiverView.classList.remove('hidden');
+      if (bottomNav) bottomNav.classList.add('hidden');
+      if (toggleLabel) toggleLabel.innerText = 'Patient App';
+      if (window.caregiverDashboard) window.caregiverDashboard.loadDashboard();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  switchToPatientMode() {
+    const patientView = document.getElementById('patientAppView');
+    const caregiverView = document.getElementById('caregiverDashboardView');
+    const bottomNav = document.getElementById('bottomNav');
+    const toggleLabel = document.getElementById('modeToggleLabel');
+
+    if (patientView && caregiverView) {
+      patientView.classList.remove('hidden');
+      caregiverView.classList.add('hidden');
+      if (bottomNav) bottomNav.classList.remove('hidden');
+      if (toggleLabel) toggleLabel.innerText = 'Caregiver View';
     }
   }
 
   fallbackLocalIntent(text) {
     const lower = text.toLowerCase();
     let reply = "Savitri ji, I am here with you. Your next medicine is scheduled for 11:30 AM.";
-    let intent = "general";
+    let data = { intent: "general_query", speech_response: reply };
 
     if (lower.includes('help') || lower.includes('sos') || lower.includes('madad') || lower.includes('bachao')) {
       reply = "Emergency assistance requested. Contacting your son Rahul Sharma and Dr. Barua.";
-      intent = "emergency_sos";
-    } else if (lower.includes('medicine') || lower.includes('dawai') || lower.includes('tablet') || lower.includes('schedule') || lower.includes('today')) {
-      reply = "Your next tablet is Blood Pressure Amlodipine 5mg at 11:30 AM.";
-      intent = "get_schedule";
+      data = { intent: "emergency_sos", speech_response: reply };
     } else if (lower.includes('game') || lower.includes('khel') || lower.includes('photo') || lower.includes('play')) {
-      reply = "Opening Family Photo Memory game now. Let us play together!";
-      intent = "start_cognitive_game";
-    } else if (lower.includes('where') || lower.includes('kahan') || lower.includes('location') || lower.includes('ghar')) {
-      reply = "You are safely at home in Shillong with your loving family.";
-      intent = "location_orientation";
+      reply = "Opening Mind Activities and cognitive games now.";
+      data = { intent: "navigate_tab", nav_target: "games", speech_response: reply };
+    } else if (lower.includes('memory') || lower.includes('album') || lower.includes('yaad')) {
+      reply = "Opening your personal Memory Capsule and family photos.";
+      data = { intent: "navigate_tab", nav_target: "memory", speech_response: reply };
+    } else if (lower.includes('caregiver') || lower.includes('doctor') || lower.includes('dashboard') || lower.includes('portal')) {
+      reply = "Opening Caregiver and Doctor Clinical Dashboard.";
+      data = { intent: "navigate_mode", nav_target: "caregiver", speech_response: reply };
+    } else if (lower.includes('consent') || lower.includes('permission') || lower.includes('circle')) {
+      reply = "Opening Care Circle permissions and Digital ID.";
+      data = { intent: "navigate_tab", nav_target: "consent", speech_response: reply };
+    } else if (lower.includes('profile') || lower.includes('user') || lower.includes('login') || lower.includes('account')) {
+      reply = "Opening User Profile & Account Switcher.";
+      data = { intent: "navigate_modal", nav_target: "auth", speech_response: reply };
+    } else if (lower.includes('water') || lower.includes('paani') || lower.includes('thirsty')) {
+      reply = "Water reminder registered. Please have a warm glass of water.";
+      data = { intent: "action_need", action: "water_need", speech_response: reply };
+    } else if (lower.includes('medicine') || lower.includes('dawai') || lower.includes('schedule') || lower.includes('today')) {
+      reply = "Your next tablet is Blood Pressure Amlodipine 5mg at 11:30 AM.";
+      data = { intent: "get_schedule", nav_target: "today", speech_response: reply };
+    } else if (lower.includes('where') || lower.includes('kahan') || lower.includes('location')) {
+      reply = "You are safely at home in Shillong with your family.";
+      data = { intent: "location_orientation", nav_target: "today", speech_response: reply };
     }
 
     const replyBox = document.getElementById('voiceReplyBox');
@@ -300,7 +413,7 @@ class VoiceAssistantEngine {
     }
 
     this.speak(reply);
-    this.executeVoiceAction({ intent: intent, speech_response: reply });
+    this.executeVoiceAction(data);
   }
 
   injectVoiceModal() {
@@ -308,7 +421,7 @@ class VoiceAssistantEngine {
 
     const modalHtml = `
       <div id="voiceAssistantModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-3 sm:p-4">
-        <div class="bg-surface-container-lowest text-on-surface rounded-t-3xl sm:rounded-3xl w-full max-w-lg p-6 shadow-2xl border border-primary/20 space-y-4 animate-fade-in relative">
+        <div class="bg-surface-container-lowest text-on-surface rounded-t-3xl sm:rounded-3xl w-full max-w-lg p-6 shadow-2xl border border-primary/20 space-y-4 animate-fade-in relative max-h-[90vh] overflow-y-auto">
           
           <!-- Header -->
           <div class="flex items-center justify-between border-b border-surface-container pb-3">
@@ -317,8 +430,8 @@ class VoiceAssistantEngine {
                 <span class="material-symbols-outlined text-2xl">mic</span>
               </div>
               <div>
-                <h3 class="font-headline-md font-bold text-primary leading-tight">AASRA Voice Companion</h3>
-                <p class="text-xs text-on-surface-variant font-medium">16 Indic Languages • Sarvam AI Powered</p>
+                <h3 class="font-headline-md font-bold text-primary leading-tight">AASRA Voice & Navigation Companion</h3>
+                <p class="text-xs text-on-surface-variant font-medium">16 Indic Languages • Voice Navigation Enabled</p>
               </div>
             </div>
             <button onclick="window.voiceAssistant.closeVoiceModal()" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors">
@@ -342,15 +455,15 @@ class VoiceAssistantEngine {
             </div>
 
             <p id="voiceModalStatus" class="text-xs font-semibold text-primary text-center">
-              Tap mic to speak or choose a command below
+              Tap mic to speak or navigate anywhere with 1 tap below
             </p>
           </div>
 
           <!-- Live Transcript Box -->
           <div class="bg-surface-container p-3.5 rounded-xl">
-            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Your Voice Command:</span>
+            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Recognized Voice Command:</span>
             <p id="voiceTranscriptBox" class="text-sm font-medium text-on-surface italic min-h-[24px]">
-              "AASRA, what is my schedule today?"
+              "Go to Mind Games"
             </p>
           </div>
 
@@ -358,36 +471,45 @@ class VoiceAssistantEngine {
           <div id="voiceReplyBox" class="hidden bg-primary/10 border border-primary/20 p-3.5 rounded-xl text-sm font-semibold text-primary leading-relaxed">
           </div>
 
-          <!-- Quick 1-Tap Sample Voice Command Chips -->
+          <!-- Voice Navigation Chips Grid -->
           <div>
-            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider block mb-2">Quick 1-Tap Commands:</span>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <button onclick="window.voiceAssistant.handleVoiceInput('AASRA, what do I have to do today?')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
-                <span>🗓️</span> <span>What is next today?</span>
+            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider block mb-2">Voice Navigation Commands:</span>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="window.voiceAssistant.handleVoiceInput('Go to Mind Games')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
+                <span>🧠</span> <span>Go to Mind Games</span>
               </button>
-              <button onclick="window.voiceAssistant.handleVoiceInput('Did I take my blood pressure medicine?')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
-                <span>💊</span> <span>Check my medicines</span>
+              <button onclick="window.voiceAssistant.handleVoiceInput('Play math puzzle game')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
+                <span>🪙</span> <span>Play Math Game</span>
               </button>
-              <button onclick="window.voiceAssistant.handleVoiceInput('Let us play the family photo game')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
-                <span>🧠</span> <span>Play Memory Game</span>
+              <button onclick="window.voiceAssistant.handleVoiceInput('Open Memory Capsule')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
+                <span>🖼️</span> <span>Open Photo Capsule</span>
               </button>
-              <button onclick="window.voiceAssistant.handleVoiceInput('AASRA, where am I right now?')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
-                <span>📍</span> <span>Where am I?</span>
+              <button onclick="window.voiceAssistant.handleVoiceInput('Open Caregiver Dashboard')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
+                <span>📊</span> <span>Caregiver Dashboard</span>
               </button>
-              <button onclick="window.voiceAssistant.handleVoiceInput('Call my son Rahul Sharma')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
-                <span>📞</span> <span>Call Rahul Sharma</span>
+              <button onclick="window.voiceAssistant.handleVoiceInput('Open Care Circle Permissions')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
+                <span>🛡️</span> <span>Care Circle & ID</span>
               </button>
-              <button onclick="window.voiceAssistant.handleVoiceInput('AASRA HELP ME EMERGENCY')" class="p-2.5 rounded-xl bg-red-100 hover:bg-red-200 text-xs font-bold text-left text-red-800 flex items-center gap-2 transition-all">
-                <span>🚨</span> <span>Emergency SOS</span>
+              <button onclick="window.voiceAssistant.handleVoiceInput('Switch User Profile')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
+                <span>👤</span> <span>Switch Profile</span>
+              </button>
+              <button onclick="window.voiceAssistant.handleVoiceInput('What is my schedule today?')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
+                <span>🗓️</span> <span>Today Routine</span>
+              </button>
+              <button onclick="window.voiceAssistant.handleVoiceInput('AASRA I need water')" class="p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-left text-on-surface flex items-center gap-2 transition-all">
+                <span>🚰</span> <span>Need Water</span>
+              </button>
+              <button onclick="window.voiceAssistant.handleVoiceInput('AASRA HELP ME EMERGENCY')" class="col-span-2 p-2.5 rounded-xl bg-red-100 hover:bg-red-200 text-xs font-bold text-left text-red-800 flex items-center gap-2 transition-all">
+                <span>🚨</span> <span>Emergency SOS Voice Trigger</span>
               </button>
             </div>
           </div>
 
           <!-- Type Command Input -->
-          <div class="flex items-center gap-2 pt-2">
-            <input type="text" id="voiceTextInput" placeholder="Or type a voice command in any language..." class="flex-1 px-3.5 py-2.5 rounded-xl bg-surface-container border border-surface-container-high text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary">
+          <div class="flex items-center gap-2 pt-1">
+            <input type="text" id="voiceTextInput" placeholder="Say or type 'Go to games', 'Open photos'..." class="flex-1 px-3.5 py-2.5 rounded-xl bg-surface-container border border-surface-container-high text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary">
             <button onclick="window.voiceAssistant.handleTypedInput()" class="px-4 py-2.5 rounded-xl bg-primary text-on-primary text-xs font-bold shrink-0">
-              Send
+              Go
             </button>
           </div>
 

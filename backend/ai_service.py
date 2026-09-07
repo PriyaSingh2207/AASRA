@@ -147,33 +147,123 @@ class AIService:
         curr_res = responses.get(clean_lang, responses.get("hi", responses["en"]))
         intent = "general_query"
         action = "conversational_reply"
+        nav_target = None
+        game_id = None
         speech_text = curr_res["general"]
 
-        # 1. Emergency Intent across all Indic languages
+        # 1. Emergency SOS Intent
         if any(k in t for k in ["help", "emergency", "sos", "bachao", "madad", "doktor", "kyaa karun", "asustha", "সহায়", "জৰুৰী", "সাহায্য", "ಸಹಾಯ", "സഹായം", "मदत", "ସାହାଯ୍ୟ", "ਮਦਦ", "உதவி", "సహాయం", "મદદ", "mateng", "puih", "mader", "bisa"]):
             intent = "emergency_sos"
             action = "trigger_sos"
             speech_text = curr_res["sos"]
 
-        # 2. Schedule & Reminder Query across all Indic languages
+        # 2. Specific Game Direct Voice Launch
+        elif any(k in t for k in ["math", "coin", "tea number", "paisa", "sikka", "হিসাপ", "गणित"]):
+            intent = "navigate_game"
+            action = "launch_game"
+            game_id = "math_puzzle"
+            speech_text = "Opening Coin & Tea Numbers Math puzzle. Let's solve gently!" if clean_lang == "en" else "सिक्के और चाय का गणित खेल शुरू किया जा रहा है।"
+        elif any(k in t for k in ["target", "focus", "leaf", "spatial", "ध्यान"]):
+            intent = "navigate_game"
+            action = "launch_game"
+            game_id = "spatial_focus"
+            speech_text = "Opening Gentle Target Focus exercise." if clean_lang == "en" else "टारगेट फोकस ध्यान खेल शुरू किया जा रहा है।"
+        elif any(k in t for k in ["clock", "season", "time", "weather", "samay", "मौसम", "সময়"]):
+            intent = "navigate_game"
+            action = "launch_game"
+            game_id = "time_quiz"
+            speech_text = "Opening Clock & Season Orientation quiz." if clean_lang == "en" else "घड़ी और मौसम की जाँच शुरू की जा रही है।"
+        elif any(k in t for k in ["plant", "flower", "garden", "herbal", "tulsi", "বাগিচা", "पौधा"]):
+            intent = "navigate_game"
+            action = "launch_game"
+            game_id = "plant_match"
+            speech_text = "Opening Herbal Garden Match game." if clean_lang == "en" else "तुलसी और नीम का हर्बल बगीचा खेल शुरू हो रहा है।"
+        elif any(k in t for k in ["proverb", "phrase", "word", "kahavat", "कहावत"]):
+            intent = "navigate_game"
+            action = "launch_game"
+            game_id = "word_association"
+            speech_text = "Opening Familiar Phrase Completion." if clean_lang == "en" else "लोकप्रिय कहावत और मुहावरे का खेल शुरू किया जा रहा है।"
+        elif any(k in t for k in ["chime", "sound", "bell", "ghanti", "sequence", "घंटी", "শব্দ"]):
+            intent = "navigate_game"
+            action = "launch_game"
+            game_id = "sequence_recall"
+            speech_text = "Opening Nature Chime Sequence game." if clean_lang == "en" else "प्रकृति की घंटियों की धुन का खेल शुरू हो रहा है।"
+        elif any(k in t for k in ["tea tray", "sorter", "sort", "morning tray", "चाय की ट्रे"]):
+            intent = "navigate_game"
+            action = "launch_game"
+            game_id = "daily_categorization"
+            speech_text = "Opening Morning Tea Tray Sorter game." if clean_lang == "en" else "सुबह की चाय की ट्रे सजाने का खेल शुरू हो रहा है।"
+
+        # 3. Tab Navigation: Mind Games
+        elif any(k in t for k in ["game", "play", "khel", "photo", "family", "memory game", "mind activities", "খেল", "গেম", "ছবি", "ಆಟ", "കളി", "खेळ", "ଖେଳ", "ਖੇਡ", "விளையாட்டு", "ఆట", "રમત", "লাফান"]):
+            intent = "navigate_tab"
+            action = "switch_tab"
+            nav_target = "games"
+            speech_text = curr_res["game"]
+
+        # 4. Tab Navigation: Memory Capsule
+        elif any(k in t for k in ["memory capsule", "photo album", "photos", "yaadein", "purani yaadein", "album", "स्मृति", "স্মৃতি সঁফুৰা", "ফটো", "ನೆನಪುಗಳು"]):
+            intent = "navigate_tab"
+            action = "switch_tab"
+            nav_target = "memory"
+            speech_text = "Opening your personal Memory Capsule and family photos." if clean_lang == "en" else "आपकी पारिवारिक स्मृतियों का एलबम खोला जा रहा है।"
+
+        # 5. Tab Navigation: Care Circle & Consent
+        elif any(k in t for k in ["care circle", "consent", "permission", "digital id", "parivaar", "family access", "অনুমতি", "अनुमति", "सुरक्षा"]):
+            intent = "navigate_tab"
+            action = "switch_tab"
+            nav_target = "consent"
+            speech_text = "Opening Care Circle, Digital Health ID, and consent settings." if clean_lang == "en" else "केयर सर्कल और डिजिटल पहचान पत्र खोला जा रहा है।"
+
+        # 6. Mode Navigation: Caregiver / Doctor Dashboard
+        elif any(k in t for k in ["caregiver dashboard", "doctor view", "caregiver view", "doctor portal", "rahul dashboard", "barua", "clinical metrics", "analytics", "क्लिनिकल"]):
+            intent = "navigate_mode"
+            action = "switch_mode"
+            nav_target = "caregiver"
+            speech_text = "Switching to Caregiver & Doctor Clinical Dashboard." if clean_lang == "en" else "केयरगिवर और डॉक्टर क्लिनिकल डैशबोर्ड खोला जा रहा है।"
+
+        # 7. Mode Navigation: Patient App
+        elif any(k in t for k in ["patient view", "patient app", "senior app", "back to app", "home", "mera app", "patient"]):
+            intent = "navigate_mode"
+            action = "switch_mode"
+            nav_target = "patient"
+            speech_text = "Switching to Patient Companion App." if clean_lang == "en" else "मरीज सहायक स्क्रीन पर वापस जाया जा रहा है।"
+
+        # 8. Profile & Auth Navigation
+        elif any(k in t for k in ["switch user", "switch profile", "sign in", "login", "profile", "account", "खाता"]):
+            intent = "navigate_modal"
+            action = "open_auth"
+            nav_target = "auth"
+            speech_text = "Opening User Profile & Account Switcher." if clean_lang == "en" else "उपयोगकर्ता प्रोफ़ाइल और खाता चयन खोला जा रहा है।"
+
+        # 9. Language Navigation
+        elif any(k in t for k in ["change language", "language", "bhasha", "english", "hindi", "assamese", "bengali", "ভাষা"]):
+            intent = "navigate_modal"
+            action = "open_lang"
+            nav_target = "lang"
+            speech_text = "Opening language selection settings." if clean_lang == "en" else "भाषा चयन सूची खोली जा रही है।"
+
+        # 10. Water / Thirsty AAC Action
+        elif any(k in t for k in ["water", "paani", "thirsty", "pyas", "পানী", "জল", "నీరు", "पाणी"]):
+            intent = "action_need"
+            action = "water_need"
+            speech_text = "Water reminder registered. Please have a warm glass of water Savitri ji." if clean_lang == "en" else "पानी की आवश्यकता दर्ज की गई। सावित्री जी, कृपया एक गिलास पानी पी लें।"
+
+        # 11. Schedule & Medication
         elif any(k in t for k in ["today", "do today", "kya karna hai", "schedule", "routine", "dawai", "medicine", "pill", "remind", "ঔষধ", "দৰৱ", "ಮಾತ್ರೆ", "ഗുളിക", "औषध", "ଔଷଧ", "ਦਵਾਈ", "மருந்து", "మందు", "દવા", "হিদাক", "damdawi", "muli"]):
             intent = "get_schedule"
             action = "read_next_reminder"
+            nav_target = "today"
             speech_text = curr_res["schedule"]
 
-        # 3. Location / Orientation Query
-        elif any(k in t for k in ["where am i", "kahan hun", "location", "home", "ghar", "place", "ক’ত আছোঁ", "কোথায় আছি", "ಎಲ್ಲಿದ್ದೀনি", "എവിടെയാണ്", "कुठे आहे", "କେଉଁଠି", "ਕਿੱਥੇ ਹਾਂ", "எங்கே இருக்கிறேன்", "ఎక్కడ ఉన్నాను", "ક્યાં છું", "khawiah", "bbeayaw", "kot ase"]):
+        # 12. Location / Orientation Query
+        elif any(k in t for k in ["where am i", "kahan hun", "location", "home", "ghar", "place", "ক’ত আছোঁ", "কোথায় আছি", "ಎಲ್ಲಿದ್ದೀನಿ", "എവിടെയാണ്", "कुठे आहे", "କେଉଁଠି", "ਕਿੱਥੇ ਹਾਂ", "எங்கே இருக்கிறேன்", "ఎక్కడ ఉన్నాను", "ક્યાં છું", "khawiah", "bbeayaw", "kot ase"]):
             intent = "location_orientation"
             action = "speak_location"
+            nav_target = "today"
             speech_text = curr_res["location"]
 
-        # 4. Cognitive Game Request
-        elif any(k in t for k in ["game", "play", "khel", "photo", "family", "memory", "খেল", "গেম", "ছবি", "ಆಟ", "കളി", "खेळ", "ଖେଳ", "ਖੇਡ", "விளையாட்டு", "ఆట", "રમત", "লাফান"]):
-            intent = "start_cognitive_game"
-            action = "launch_game"
-            speech_text = curr_res["game"]
-
-        # 5. Caregiver Call Request
+        # 13. Caregiver Call Request
         elif any(k in t for k in ["call rahul", "talk caregiver", "rahul se baat", "son", "phone", "ৰাহুল", "রাহুল", "ರಾಹುಲ್", "രാഹുൽ", "राहुल", "ରାହୁଲ", "ਰਾਹੁਲ", "ராகுல்", "రాహుల్", "રાહુલ", "ফোন", "mcha nupa"]):
             intent = "call_caregiver"
             action = "dial_caregiver"
@@ -187,6 +277,8 @@ class AIService:
         return {
             "intent": intent,
             "action": action,
+            "nav_target": nav_target,
+            "game_id": game_id,
             "speech_response": speech_text,
             "language": clean_lang,
             "sarvam_tts": tts_res
