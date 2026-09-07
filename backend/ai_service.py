@@ -143,7 +143,8 @@ class AIService:
             }
         }
         
-        curr_res = responses.get(lang, responses.get("hi", responses["en"]))
+        clean_lang = (lang or "hi").split("-")[0].lower()
+        curr_res = responses.get(clean_lang, responses.get("hi", responses["en"]))
         intent = "general_query"
         action = "conversational_reply"
         speech_text = curr_res["general"]
@@ -161,7 +162,7 @@ class AIService:
             speech_text = curr_res["schedule"]
 
         # 3. Location / Orientation Query
-        elif any(k in t for k in ["where am i", "kahan hun", "location", "home", "ghar", "place", "ক’ত আছোঁ", "কোথায় আছি", "ಎಲ್ಲಿದ್ದೀನಿ", "എവിടെയാണ്", "कुठे आहे", "କେଉଁଠି", "ਕਿੱਥੇ ਹਾਂ", "எங்கே இருக்கிறேன்", "ఎక్కడ ఉన్నాను", "ક્યાં છું", "khawiah", "bbeayaw", "kot ase"]):
+        elif any(k in t for k in ["where am i", "kahan hun", "location", "home", "ghar", "place", "ক’ত আছোঁ", "কোথায় আছি", "ಎಲ್ಲಿದ್ದೀনি", "എവിടെയാണ്", "कुठे आहे", "କେଉଁଠି", "ਕਿੱਥੇ ਹਾਂ", "எங்கே இருக்கிறேன்", "ఎక్కడ ఉన్నాను", "ક્યાં છું", "khawiah", "bbeayaw", "kot ase"]):
             intent = "location_orientation"
             action = "speak_location"
             speech_text = curr_res["location"]
@@ -181,13 +182,13 @@ class AIService:
         # Optional Sarvam Bulbul:v1 neural TTS generation
         tts_res = None
         if generate_audio:
-            tts_res = sarvam_service.text_to_speech(speech_text, lang=lang)
+            tts_res = sarvam_service.text_to_speech(speech_text, lang=clean_lang)
 
         return {
             "intent": intent,
             "action": action,
             "speech_response": speech_text,
-            "language": lang,
+            "language": clean_lang,
             "sarvam_tts": tts_res
         }
 
